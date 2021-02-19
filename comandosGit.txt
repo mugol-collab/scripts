@@ -1,0 +1,224 @@
+Tutorial Git
+
+GIT es un Sistema de Control de Versiones (VCS), es decir, un software que permite registrar todo el historial de cambios de un proyecto.
+
+Terminología
+
+Repositorio 
+
+Un repositorio es todo proyecto que esta siendo seguido por GIT, es decir, que ya tiene un historial de GIT en el que se están registrando sus cambios.
+
+Commit
+
+Un commit es cada uno de los cambios registrados en el historial de GIT. Cada uno de los desarrolladores manda los commits de los cambios que ha hecho.
+
+Integridad de datos
+
+GIT agrega una suma de verificación (checksum) a cada uno de los archivos y de los commits, de tal manera que hay una seguridad total de cada uno de los desarrolladores tenga los mismos datos que los demás, ya que en cado de haber datos corruptos, el proyecto podría entrar en graves problemas. 
+
+Ramas
+
+Las ramas, son ramificaciones, bifurcaciones o nuevos caminos que toma el proyecto.
+
+En git todo se trabaja por ramas, por lo general en cada proyecto existen dos ramas, una rama principal que suele llamarse ‘Master’, la cual no se toca y es donde está la versión para producción o dicho de otra manera, el proyecto que sale al público y una rama ‘Dev’, que sale de Master y es con la que se trabaja. Cada vez que se quiere trabajar en una característica nueva o corregir algo, se saca una rama de ‘Dev’, de tal manera que se puede tener una copia exacta del proyecto para trabajar esta característica específica en un ambiente aislado, haciendo que si algo sale mal, la rama se elimina sin ningún problema y no se compromete al proyecto, y si en cambio todo sale bien, esta rama luego se integra con el proyecto principal en ‘Dev’ (lo que se conoce como Merge), y finalmente ‘Dev’ se integra a ‘Master’.
+
+Branch y  Merge
+
+Acción de integrar una rama con el proyecto principal 
+
+Clon
+
+Un clon es una copia exacta del repositorio. Cuando un programador se integra en un equipo de trabajo, lo primero que debe hacer es clonar el repositorio en su equipo local. Entonces, cada uno de los desarrolladores tiene un clon del repositorio en su equipo local.
+
+Fork
+
+Un fork, a diferencia de un clon y de una rama es un proyecto completamente diferente que se crea a partir de otro, por ejemplo, las distribuciones de linux, todas se basan en un kernel, pero a partir de ahí, toman diferentes caminos.
+
+FLUJO DE TRABAJO BASICO CON GIT
+
+> Crear el repositorio 	
+			
+	git init     	 si es un repositorio nuevo
+	git clone 	 si es un repositorio que ya existe
+
+> Trabajar en el proyecto 
+
+y enviar los cambios o avances  realizados al repositorio a través de commits, con el comando git commit. Cada cambio no se guarda automaticamente, se envía a través de commits, donde cada uno de ellos representa una funcionalidad específica, que puede ser una solución a un problema, una nueva funcionalidad, un cambio en una interfaz, etc. El programador debe escribir de que se trata este commit.
+
+Los cambios realizados no van directamente al repositorio, si no que hay una etapa intermedia, llamada Stagin Area (Area de preparación), donde cada archivo modificado se envía al Stalin área con el comando git add. Las modificaciones no se mandan al repositorio hasta estar completamente seguro de que se hicieron las modificaciones en todos los archivos necesarios. Mientras tanto están en espera en el Stagin Area. 
+
+ El flujo de trabajo en git se realiza tres áreas bien diferenciadas: 
+
+1. El área de trabajo (working directory) donde esta el desarrollador trabajando con todos sus archivos
+2. El área de preparación (staging area), que es el área intermedia donde se van guardando los cambios
+3. El repositorio
+
+COMANDOS git
+
+* git init		crea un proyecto nuevo o empieza a utilizar git en un proyecto ya creado
+* git add <file>	pasar los archivos del working directory al staging area  
+* git status		verifica en que área están los archivos (working directory, staging area o repositorio)
+* git commit		pasar los archivos desde el staging área al repositorio
+* git log		ver el historico de commits
+* git branch 		muestra las ramas del proyecto
+	-a 		mostra todos os branch locais + a referencia dos remotos
+* git checkout		Me permite moverme entre las ramas del proyecto
+* git checkout - -      descarto cambios o vuelvo a un commit anterior (los guiones son seguidos, sin espacios y luego va el 
+			nombre del archivo o del commit al que quiero retornar)
+* git diff		Ver las diferencias de un archivo o carpeta
+* git push		subir los archivos a un repositorio remoto
+* git pull		en caso de estar trabajando con otros desarrolladores muestra los cambios que se han hecho
+* git clone		hacer una copia del repositorio
+* git fetch		ele sincroniza o seu repositorio local com as informações do remoto. 
+			Después de esta sincronización es necesario usar “git branch -a” 
+			para mostrar todos os branch locais + a referencia dos remotos
+
+Ejemplos:
+
+#######################################################################################################
+					###Crear un repositorio 
+#######################################################################################################
+
+$ cd carpetaProyecto/
+
+$ git init                                                            # defino que voy a empezar a utilizar git
+$ git add VS_Deitel_Cap15_C++comoUnMejorC/                            # agrego archivos de proyecto a repositorio local (working 								      # directory)
+$ git status                                                          # verifico estado de archivos 
+$ git log                                                             # verifico histórico de proyecto
+$ git commit -m “Texto que explica que se hizo en este commit”        # agrego commit a proyecto
+$ git remote add origin https://github.com/mugol-collab/deitel.git    # indico a git la ubicación del servidor de almacenamiento de 								      # proyecto
+$ git push -u origin master                                           # subo archivos a repositorio
+
+
+#######################################################################################################
+		###Crear un branch en el repositorio y subir los cambios a este branch 
+#######################################################################################################
+
+$ git branch 					# Para mirar las ramas del proyecto
+
+$ git checkout -b nome_branch			# Crea branch y se coloca en él (verificar con git branch)
+$ git push --set-upstream origin nome_branch	# Si es el 1er push va a pedir ingresar un comando parecido 
+						# para crear el branch en el repositorio remoto
+
+$ git push					# Si no es el 1er push 
+
+#######################################################################################################
+				###Eliminar un branch no repo local 
+#######################################################################################################
+$ git branch -d nome_branch
+
+#######################################################################################################
+				### Hacer un merge no master de um brach
+#######################################################################################################
+
+- me paso al branch master y subo las alteraciones
+
+$ git checkout master
+$ git pull . nome_branch 			# El punto (.) solo me indica que es para él mismo
+
+### Opção 2
+
+$ git checkout master
+$ git merge <nome_branch >			# el nombre del branch sin los signos <>
+
+
+#######################################################################################################
+				###Actualizar um branch local desde o master
+#######################################################################################################
+
+- Fazer um pull direto para o seu branch mas dizendo que voce quer receber as alterações do master
+
+$ git checkout <nome_branch>
+$ git pull origin master
+			
+#######################################################################################################
+				###Actualizar um branch desde otro branch
+#######################################################################################################
+
+- Fazer um pull dizendo que quer receber as alterações do outro branch
+
+$ git pull origin <nome_branch>
+
+
+#######################################################################################################
+				###Mostrar os branchs creados no remoto em o meu repositorio local
+#######################################################################################################
+
+- Esto significa sincronizar o repositorio local com as informações do remoto
+
+$ git fetch				# atualiza o repositório local com as mudanças do remoto sem
+					# baixa-las
+$ git branch -a				# mostra todos os branch locais + a referencia dos remotos
+$ git checkout <nome_branch>		# cambia a un brach específico
+$ git pull				# baixa as atualizações do branch remoto para o branch local
+
+#######################################################################################################
+				###Descartar cambios en un archivo en un repo local 
+#######################################################################################################
+
+$ git checkout - -<nome_arquivo>	# los dos guiones van seguidos y el nombre sin los signos <>
+$ git checkout -- Core/Src/arquivo.c
+
+Ou
+
+$ git reset --hard HEAD			# si es más de un archivo, e se esta dando un pull
+$ git pull
+
+#######################################################################################################
+				###Verificación y corrección de errores 
+#######################################################################################################
+
+$ git remote remove origin      # borra la ubicación del repositorio en caso de que esta haya 								        # cambiado
+
+$ git reflog			# Muestra histórico de alteraciones hechas en el repositorio
+$ git checkout b94f6	        # vuelve a un commit (estado) anterior, es decir, descarto 									# cambios. El argumento después de checkout es el 										# número del commit al que quiero retornar
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

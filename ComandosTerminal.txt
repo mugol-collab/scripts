@@ -1,0 +1,1090 @@
+**************************************************************************
+cat		permite visualizar archivos sin tener que abrirlos en un 
+cat file.txt    editor de texto además de concaternar archivos
+
+cut		Permite cortar una porcion de cada linea del archivo
+
+find 		Permite realizar búsquedas rápidas en el sistema 
+
+head		   Permite visualizar un numero determinado de lineas del 
+head -5 file.txt   principio del archivo, si no se le especifica cuantas  
+		   muetra 10 lineas por defecto
+
+sed		Permite realizar edición básico de un archivo de texto	
+		o de un stream de entrada proveniente de otro comando:
+
+La siguiente linea reemplaza cada caracter backslash s for un espacio +
+un caracter backslash n (que significa nueva línea)
+
+sed -e 's/\s/\n/g' < shakespeare.txt > replace-text
+
+En la primera parte de esta línea hasta el | después de shakespeare.txt se 
+convierte cada espacio en blanco entre palabras a un salto de línea, obteniedo
+una salida con una palabra por línea y algunas líneas en blanco que ya existian
+antes. luego esta salida se ordena y se remueven las lineas en blanco restantes.
+En seguida se utiliza uniq -c para obtener el conteo individual de las palabras
+repetidas. Este conteo se pasa al comando sort -nr para hacer un ordenamiento
+numérico y finalmente con el comando head -15 se colocan las 15 primeras líneas
+en la salida de la instrucción, la cual se direcciona al archivo count_vs_words,
+el cual da las 15 primeras palabras en orden descendente de ocurrencia.
+
+sed -e 's/ /\'$'\n/g' < shakespeare.txt | sort | sed '/^$/d' | uniq -c | sort -nr | head -15 > count_vs_words
+		 
+
+tail		   Actua casi ade la misma manera que el comando head		   
+tail -3 file.txt   pero las lneas que muestra son las ultimas		
+
+tr	Permite hacer transformaciones de caracteres de una entrada 
+	dada:
+La siguiente línea convierte todos los caracteres del archivo fruits.txt
+a mayúsculas y escribe esta salida en el archivo fruits-AllCaps.txt
+
+tr '[a-z]' '[A-Z]' <fruits.txt> fruits-AllCaps.txt
+
+wc		Cuenta las lineas o elementos de un archivo
+wc -l file.txt 
+
+COMODINES
+
+*	Es un ncomodin que se utiliza para generalizar la salida
+	de cualquier otro comando:
+	ls *.txt
+
+>	Es un comodin que se utiliza para direccionar la salida 
+	de un comando o un archivo a otro archivo:
+	tail -3 file.txt > new_tail_file.txt
+
+|	Es un comodín que se utiliza para redireccionar la salida de un
+	comando a la entrada de otro: 
+cat file.txt | wc	Este comando me cuenta el contenido del archivo 
+			proporcionado por cat
+
+COMANDOS DE FILTRADO
+
+grep	Este comando busca lineas que contengan un string especifico o 
+	patrones que sigan una entradao o flujo específicos:
+
+man cat | grep file	Aqui se busca todas las ocurrencias de la 
+			palabra file en el manual del comando cat	
+
+ls -l | grep txt | wc	Aqui se busca todas los archivos txt en una
+			ubicación y además se cuenta las ocurrencias
+
+more	Se utiliza cuando la visualización de algo supera el tamaño de
+	la pantalla, este comando muestra una salida parcial y permite
+	incrementarlo con barra espaciadora
+ls -la | more
+
+less	Muestra  
+
+sort	Ordena el contenido de un archivo alfabetica o numericamente:
+who | sort > current_users 	Aqui se muestra quien esta logeado en
+				el sistema, se ordena alfabeticamente
+				la salida y se direccina al archivo
+				current_users. (Por defecto el archivo
+				se crea como de texto plano)
+
+uniq		Permite filtrar los elementos repetidos de un archivo,   
+		la salida se direcciona a otro archivo
+uniq file.text > file-uniq.txt
+
+**************************************************************************
+		GRAFICAR POR TERMINAL
+**************************************************************************
+Este ejemplo grafica la salida obtenida en el archivo count_vs_words de la
+semana 2 del curso de DataScience, del tema Intro to Unix, video 55  
+
+$ sudo apt-get install gnuplot
+
+$ gnuplot
+
+gnuplot> set term png
+gnuplot> set output 'word-counts.png'
+gnuplot> set boxwidth 1 relative
+gnuplot> set style data histograms
+gnuplot> set style fill solid 1.0 border -1
+gnuplot> plot [][0:] "count_vs_words" using 1:xticlabels(2)
+gnuplot> exit
+
+$ ls
+count_vs_words		La salida se direcciona al archivo .png
+word-counts.png		que aparece en mi carpeta contenedora. Lo
+			ejecuto con cualquier editor de imagenes
+
+$ gimp word-counts.png
+
+**************************************************************************
+Para llamar al fijo a  Cali por skype
++57 2 3955673
+
+**************************************************************************
+AGREGAR COLORES A TERMINAL MAC
+1. Abrir con un editor de texto el archivo /etc/bashrc
+$ sudo nano -c /etc/bashrc
+
+2. Agregar al final del archivo
+
+export TERM=xterm-color
+export CLICOLOR=1
+export LSCOLORS=ExFxCxDxBxegedabagacad
+
+**************************************************************************
+AGREGAR USUARIO A GRUPOS
+
+Para agregar un usuario al grupo sudo
+$ sudo visudo
+
+Y se agrega al final del archivo que se abre
+
+usuario ALL = (ALL)ALL
+
+donde usuario es el nombre de usuario del sistema
+
+Otra forma de agregar usuarios es con 
+$ sudo adduser goss sudo
+
+**************************************************************************
+AGREGAR COMPATIBILIDAD CON 32 BITS DEBIAN 
+
+$ sudo dpkg --add-architecture i386
+
+$ sudo apt-get update
+
+$ sudo apt-get install ia32-libs
+
+**************************************************************************
+AGREGAR COLORES AL PROMPT DE LA TERMINAL
+
+1. Editar el archivo .bashrc
+   $ sudo nano ~/.bashrc
+
+   descomentarear la linea
+   force_color_prompt=yes
+
+**************************************************************************
+CAMBIAR EL NOMBRE DEL PROMPT
+
+1. Editar el archivo .bashrc
+   $ sudo nano ~/.bashrc
+   
+  Comentarear la linea que define la variable PS1 para tener la original
+
+  ##PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1" 
+
+  y editarla de la siguiente manera
+
+  PS1="\[\e]0;${debian_chroot:+($debian_chroot)}batman@MuGoL: \w\a\]$PS1"
+
+************************************************************************************
+CAPTURAS DE PANTALL EN LINUX
+
+POR TERMINAL
+
+import -pause 3 -window root mi-imagen.png
+
+"import" es el comando
+"-pause 3" el tiempo de espera
+"-window root" toma todo el escritorio
+"mi-imagen.png" nombre de la captura
+
+POR APLICACIÓN
+
+$ sudo apt-get install kazam
+$ kazam
+**************************************************************************
+CONFIGURAR LA CAMPANA AUDIOBLE DEL SISTEMA
+
+1. Seleccionar Editar > Preferencias del Perfil > General
+2. Seleccionar Campana de la terminal
+3. Pulse Cerrar. La configuración se guardará automaticamente.
+
+**************************************************************************
+CREAR ALIAS PARA COMANDOS QUE USE SIEMPRE
+
+1. Editar el archivo .bashrc
+   $ sudo nano ~/.bashrc
+  Encontrar esta linea y agreagr mis alias despues de la ultima linea
+
+# some more ls aliases
+#alias ll='ls -l'
+#alias la='ls -A'
+#alias l='ls -CF'
+alias h='cd ~'
+alias cxc='ssh -X claudia@192.168.4.59'
+
+**************************************************************************
+CREAR UNA TERMINAL CON SEGMENTOS DE COLORES
+
+1. Editar el archivo .bashrc
+   $ sudo nano ~/.bashrc
+  Encontrar estas lineas
+
+if [ "$color_prompt" = yes ]; then
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+else
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+fi
+
+y reemplazarlas por 
+
+PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u\[\033[01;34m\]@\[\033[01;33m\]
+\h\[\033[00;33m\]:\[\033[01;34m\]\w\[\033[00m\]$ '
+
+**************************************************************************
+CONFIGURAR JAVA EN DEBIAN 9 E INSTALAR APACHE-NETBEANS-10
+
+Fuentes: 
+https://www.youtube.com/watch?v=2s6h93DXf24
+https://www.youtube.com/watch?v=1uU9Toj9zXk
+
+1. Instalar el JDK de Java en su versión 8
+
+$ sudo apt-get install openjdk-8-jdk 
+**************************************************************************
+Configurar Java en el sistema
+
+1.Descarga la ultima version de java de su pagina oficial
+http://www.oracle.com/technetwork/java/index.html
+
+En Java SE 8 Update 25 
+
+tiene que llegar aqui
+http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+
+2. Se crea el directorio en el sistema 
+
+$ sudo mkdir /usr/java
+
+3. Se descomprime el archivo descarga y se mueve a /usr/java
+
+$ sudo mv jdk1.8.0_25 /usr/java
+
+4. Se ingresa al directorio /usr/java/jdk1.8.0_25/jre/bin/ y se ingresa el siguiente comando
+
+$ sudo update-alternatives --install "/usr/bin/java" "java" "/usr/java/jdk1.8.0_25/jre/bin/java" 1
+
+update-alternatives: utilizando /usr/java/jdk1.8.0_25/jre/bin/java para proveer /usr/bin/java (java) en modo automático.
+
+$ sudo update-alternatives --set java /usr/java/jdk1.8.0_25/jre/bin/java
+
+5. Salimos al directorio de usuario y verificamos version de java
+
+$ java -version
+java version "1.8.0_25"
+Java(TM) SE Runtime Environment (build 1.8.0_25-b17)
+Java HotSpot(TM) 64-Bit Server VM (build 25.25-b02, mixed mode)
+
+**************************************************************************
+6. Configurar el plugin de Java en firefox
+
+1. Ir al directorio:/usr/lib/mozilla/plugins
+$ cd /usr/lib/mozilla/plugins
+
+2. Crear el enlace simbolico del archivo libnpjp2.so
+$ sudo ln -s /usr/java/jdk1.8.0_45/jre/lib/amd64/libnpjp2.so
+
+3. Verificar applets en el navegador
+
+4. Si no cargan agregar direccion del proyecto en la configuracion de 
+   seguridad de java. Ir al directorio 
+$ cd /usr/java/jdk1.8.0_45/bin
+
+5. ejecutar el Panel de control 
+$ ./jcontrol
+
+6. En la pestaña de Seguridad --> Editar lista de sitios 
+   Para Netbeans agregar la dirección del directorio de proyectos :
+
+   file:///home/goss/NetBeansProjects/
+
+   Apareceran unas solicitudes de confiramación, dar aceptar o continuar
+
+7. Reiniciar navegador 	
+
+****************************************************************************
+INSTALAR EAGLE PCB 9.4.2
+
+$ tar -xzvf Autodesk_EAGLE_9.4.2_English_Linux_64bit.tar.gz
+$ sudo dpkg-reconfigure locales
+  [*]en_US.UTF-8
+  [*]es_CO.UTF-8
+
+****************************************************************************
+INSTALAR PAQUETES LUEGO DE INSTALAR DEBIAN 9
+
+$ sudo apt-get install gcc g++ git
+
+*****************************************************************************
+INSTALAR FIRMWARE DE TARJETA DE RED WIFI EN DEBIAN
+
+1. Identificar mi tajeta de red
+
+$ lspci
+
+12:00.0 Network controller: Broadcom Limited BCM4313 802.11bgn Wireless Network Adapter (rev 01)
+
+2. Editar el ficher sources.list para habilitar repositorios de paquetes privativos
+
+$ sudo nano -c /et/apt/sources.list
+
+### Reemplar al final de cada línea que termina en main, main contrib non-free
+
+deb http://ftp.br.debian.org/debian/ stretch main contrib non-free
+deb-src http://ftp.br.debian.org/debian/ stretch main contrib non-free
+
+deb http://security.debian.org/debian-security stretch/updates main contrib non-free
+deb-src http://security.debian.org/debian-security stretch/updates main contrib non-free
+
+# stretch-updates, previously known as 'volatile'
+deb http://ftp.br.debian.org/debian/ stretch-updates main contrib non-free
+deb-src http://ftp.br.debian.org/debian/ stretch-updates main contrib non-free
+
+3. Actualizar el sistema
+
+$ sudo apt-get update
+
+**************************************************************************
+INSTALAR PACKET TRACER 7.2.1 EN DEBIAN 9
+
+1. Descargar del site www.netacad.com , Descomprimir en la carpeta
+   creada en /opt/PacketTracer e instalar paquete
+
+$ cd /opt
+$ sudo mkdir PacketTracer
+$ cd PacketTracer
+$ sudo tar -xzvf Packet Tracer 7.2.1 for Linux 64 bit.tar.gz
+
+2. Ejecutar el ficher install
+
+$ sudo ./install
+
+3. Al ejecutar este no arranca, para solucionar es necesario agregar
+   repositorios al final fichero sources.lisd
+
+$ sudo nano -c /etc/apt/sources.list
+
+# Repositorios para instalar Packet Tracer 7.2.1
+deb http://ftp.us.debian.org/debian jessie main
+deb http://ftp.us.debian.org/debian stretch main
+deb http://deb.debian.org/debian unstable main
+
+4. Actualizar sistema - si da error actualizar más de una vez
+
+$ sudo apt-get update
+
+5. Ir al directorio de instalación y ejecutar el archivo PacketTracer7
+
+$ cd /opt/pt/bin/
+$ sudo ./PacketTracer7
+
+6. Solucionar el error de dependencias que aparece y aceptar el reinicio
+   de servicios durante las actualizaciones
+
+$ sudo apt-get install libpng12-0 libssl1.0.0 libqt5webkit5
+
+7. Copiar la libreria libcrypto en el directorio de instalación
+
+$ sudo cp -i /usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.0 /opt/pt/bin
+
+8. Al aparecer anuncioi de sobreescritura Confirmar con y
+
+cp: sobreescribir '/opt/pt/bin/ibcrypto.so.1.0.0'? (s/n) s 
+
+9. Verificar ejecutando Packet Tracer desde el directorio de instalación
+
+$ cd /opt/pt/bin
+$ sudo ./PacketTracer7
+
+**************************************************************************
+INSTALAR VIM Y OPTIMIZARLO COMO IDE DE  PYTHON
+
+1. Instalar vim
+$ sudo apt-get install vim
+
+2. Instalar plugin para python
+$ sudo apt-get install vim-python-jedi
+
+3. Revisar el estado del plugin como usuario normal
+$ vim-addons status
+
+esto devuelve
+python-jedi                 removed       removed 
+
+4. Para activarlo como usuario normal, digitar sin la palabra sudo
+$ vim-addons install python-jedi
+
+5. Comprobar estado del plugin
+$ vim-addons status
+python-jedi                 installed     removed 
+
+6. Para optimizar el vim. Editar o crear si no existe el archivo .vimrc
+$ cd /home/goss
+$ nano .vimrc
+
+7. En este archivo agregar las siguientes lineas:
+
+set number              "activa la numeración de líneas
+syntax on               "activa la opcion de sugerencia de sintaxis
+colorscheme blackboard  "define una plantilla de color especifica, ubicada en /home/goss/.vim/colors
+set textwidth=79        "rompe líneas con más de 79 columnas
+set shiftwidth=3        "ajusta las operaciones >> y << indentar y desindentar 3 columnas
+set tabstop=3           "muestra una TAB cruda como 3 columnas
+set expandtab           "inserta espacios cuando activa la tecla TAB
+set softtabstop=3       "inserta / quita 3 espacios con TAB / Backspace
+set shiftround          "redondea la sangría a multiplos de los shiftwidth especificados
+set autoindent          "inserta indentación automática a cada nueva línea
+
+
+NOTA: Con esto las filas estarán enumeradas, los tabuladores tendrán una
+      distancia de dos espacios y tendrá autoidentación. Lo que esta después
+      de la doble comilla se considera comentario 
+
+
+PARA AGREGAR COLORES AL EDITOR
+
+1. Editar el archivo /etc/vim/vimrc
+$ nano -c /etc/vim/vimrc
+
+2. Buscar la linea 
+:syntax on 
+
+   y descomentariarla (en esta version de debian linea 19), que quede asi:
+syntax on
+
+   Con esto ya habrá cambiado el esquema de colores del editor, pero esta también la
+   opción de descargar un esquema personalizado para el lenguaje, desde la página:
+   http://bytefluent.com/vivify/
+   
+3. Una vez descargado el sript de mi preferencia, copio el script de extensión .vim
+   y lo pego en la carpeta /home/goss/.vim/colors o ~/.vim/colors que es una ruta al
+   mismo directorio 
+$ cp corporation.vim /home/goss/.vim/colors
+
+4. Para usarlo tengo que activarlo cada vez que abra vim, tecleando en el modo de
+   comando
+:syntax on
+:colorscheme corporation  
+
+5. Para que este esquema de colores se inicie con vim cada vez que lo ejecute, edito
+   de nuevo el archivo .vimrc en el directorio /home/goss o ~/ y agrego la linea 
+   colorscheme script_de_esquema_que_escogi 
+   El script debo copiarlo dentro de la carpeta /home/goss/.vim/colors
+$ nano -c ~/.vimrc
+syntax on
+colorscheme advantage
+
+PARA INSTALAR PLUGINS A VIM
+
+1. Instalar curl
+$ sudo apt-get install curl
+
+2. Ingresar al directorio autoload
+$ cd ~/.vim/autoload/  
+
+o crearlo si no exite
+
+$ mkdir ~/.vim/autoload/
+
+3. Descargar el script de configuración plug.vim
+$ curl -O https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
+también se puede descargarlo con wget
+$ wget https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
+4. Editar el archivo .vimrc 
+$ nano -c /home/goss/.vimrc
+
+y agregar las siguientes lineas
+
+call plug#begin('~/.vim/plugged')
+
+"Lista de plugins
+
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'scrooloose/nerdtree'  | Plug 'Xuyuanp/nerdtree-git-plugin'
+
+call plug#end()
+
+5. Verificar que git este instalado en el sistema y luego ejecutar el
+   comando 
+
+:PlugInstall 
+
+   en vim para intalar los plugins
+
+6. Para hacer que los plugins se carguen al arrancar vim y no toque llamarlos cada vez, se agrega lo siguiente al archivo, esta linea es para llamar al plugin nerdtree que agrega al editor un gestor de archvivos al lado izquierdo:
+
+autocmd vimenter * NERDTree
+
+************************************************************************************
+Instalar flash player en navegador firefox
+
+1. Descargar la ultima version de flash de 
+https://get.adobe.com/es/flashplayer/
+
+2. Desempaquetar el archivo 
+$ sudo tar xzvf install_flash_player_11_linux.x86_64.tar.gz
+
+3. Copiar el archivo libflashplayer.so al subdirectorio plugins del 
+   directorio de la instalación de Firefox
+$ sudo cp libflashplayer.so /usr/lib/mozilla/plugins
+
+4. Darle permisos de ejecucion
+$ sudo chmod +x libflashplayer.so
+
+************************************************************************************
+Instalar driver NVIDIA 
+
+1. Mirar que driver esta funcionando y el modelo y referencia de la tarjeta de video
+
+$ lspci | egrep VGA
+$ sudo lshw -c display
+
+2. Descargar el driver especifico para el sistema
+
+3. Entrar a una tty (Ctrl+Alt+F1) y desactivar entorno grafico
+
+$ sudo /etc/init.d/lightdm stop        $sudo /etc/init.d/gdm stop
+
+4. Desinstalar driver nouveau
+ 
+$ sudo apt-get autoremove xserver-xorg-video-nouveau
+
+5. Instalar driver 
+
+# ./driver_NVIDIA.run
+
+************************************************************************************
+Algunos sistemas tales como FreeBSD y Solaris pueden ser configurados para 
+escribir los archivos core en directorios específicos p.e. '/var/coredumps', 
+usando los comandos sysctl y coreadm.
+gcc.pdf - pg 56
+
+************************************************************************************
+INSTALAR ENTORNO DE ESCRITORIO KDE EN DEBIAN
+
+$ sudo apt-get install kde-plasma-desktop kde-l10n-es
+$ sudo apt-get update ; sudo apt-get upgrade
+$ sudo reboot
+
+Una vez instalado kde no deja abrir gparted, esto se soluciona con
+$ echo "" >> $HOME/.bashrc && echo "export XAUTHORITY=$HOME/.Xauthority" >> $HOME/.bashrc && cd $HOME && .bashrc
+
+************************************************************************************
+INSTALAR ENTORNO GRÁFICO ION3
+
+Descargar e instalar paquete ion3_20090110-2_amd64.deb
+
+Luego puedo
+wmforkplop
+
+************************************************************************************
+INSTALAR Y CONFIGURAR WIRESHARK
+
+$ sudo apt-get install wireshark
+
+$ sudo dpkg-reconfigure wireshark-common
+
+$ sudo usermod -a -G wireshark $USER
+************************************************************************************
+
+MONTAR MEMORIA USB 
+
+mount -t vfat /dev/sdc1 /media/carpetaDeMontaje
+
+************************************************************************************
+MONTAR DISCO NTFS
+
+$ sudo apt-get install libfuse2
+$ sudo apt-get install ntfs-3g
+
+Para buscar el disco ntfs conectado
+$ sudo fdisk -l | grep -i ntfs
+
+Para montar creo una carpeta en el directoria /media para montar el disco
+$ sudo mount -t ntfs-3g /dev/sdb1 /media/USbNTFS
+
+************************************************************************************
+PARA MONTAR PARTICION NTFS
+
+1. Instalar el apquete ntfs-3g
+
+$ sudo apt-get install ntfs-3g
+
+2. Crear un directorio de montaje en /media  
+
+$ sudo mkdir /media/windows7
+
+3. verificar particion a montar
+
+$ sudo fdisk -l
+
+4. Montar partición
+
+$ sudo mount -t ntfs-3g /dev/sda3 /media/windows7/
+
+PARA QUE ESTA PARTICIÓN ESTE MONTADA SIEMPRE AL INICIAR EL SISTEMA 
+
+Es necesario editar un archivo del sistema
+
+$ sudo nano  /etc/fstab
+
+se agrega el final
+
+/dev/sda3 /media/windows7 ntfs-3g defaults,locale=es_ES.UTF8 0 0
+
+************************************************************************************
+MONTAR DISPOSITIVO ANDROID A LINUX
+
+$ sudo apt-get install mtpfs
+sudo apt-get install mtp-tools
+$ sudo mkdir /media/MTPdevice
+$ sudo chmod 775 /media/MTPdevice
+$ sudo mtpfs -o allow_other /media/MTPdevice
+
+************************************************************************************
+PAQUETES ROTOS 
+
+Cuando apt-get  -f install no funciona probar 
+
+$ sudo aptitude purge $(dpkg -l|grep ^rc|awk '{ print $2 }')
+
+
+************************************************************************************
+Instalar Linssid en linux
+
+1. Agregar el repositorio
+   $ sudo add-apt-repository ppa:wseverin/ppa
+
+2. Actualizar el sistema
+   $ sudo apt-get update
+
+3. Instalar Linssid
+   $ sudo apt-get install linssid
+
+4. Si sale el siguiente error :
+   "Unable to Continue. Cannot find interface pipe"
+
+5. Colocamos en una terminal lo siguiente
+   $ sudo cat /proc/net/wireless
+   $ sudo apt-get install iw
+   $ sudo iw list
+
+6. Ahora volvemos a ejecutar linssid
+   $ sudo linssid 
+
+************************************************************************************
+
+Error despues de dar 
+   $ sudo apt-get upgrade
+     Los siguientes paquetes se han retenido
+	.
+	.
+	.
+Retiene paquetes porque es un cambio de kernel, para corregirlo con :
+   $ sudo apt-get dist-upgrade
+
+************************************************************************************
+Para cambiar el puerto 22 de SSH
+
+1. Edito el fichero sshd_config . . . . . . ojo con la 'd', ya que 
+   hay otro ssh_config.
+   $ sudo nano /etc/ssh/sshd_config
+   Port 22
+   se cambia por el que quiero usar
+   Port 1021
+   y se reinicia el servicio
+   $ sudo /etc/init.d/ssh restart
+   se hace un escaneo de puertos a internet para verificar
+   $ nmap direccionIP
+     PORT     STATE SERVICE
+     1021/tcp open  unknown
+
+************************************************************************************
+DESCOMPRIMIR ARCHIVOS
+
+archivo.tar.gz
+sudo tar -xzvf archivo.tar.gz
+
+archivo.tar.xz
+sudo tar Jxvf archivo.tar.xz
+
+archivo.tar.bz2
+sudo tar -jxvf archivo.bz2
+
+archivo.tar
+sudo tar xvf archivo.tar
+
+archivo.rar
+unrar -x Lab01.rar 
+
+archivo.zip
+unzip archivo.zip
+
+COMPRIMIR DIRECTORIOS
+archivo  tar.gz
+$ sudo tar -zcvf nombre-archivo.tar.gz nombre-directorio
+
+************************************************************************************
+DEFIBIR UNA APLICACIÓN AL ARRANQUE
+
+1. editar archivo .bashrc
+
+$ sudo nano ~/.bashrc
+
+2. Agregar al final del archivo la ruta del ejecutable de la aplicacion
+   Por ejemplo, para arduino
+
+export PATH=$PATH:/home/goss/Arduino/arduino-1.0.6
+
+3. Abrir otra terminal y llamarlo solo con el nombre del ejecutable
+
+$ arduino
+
+************************************************************************************
+Si no reconoce puerto serial Arduino
+
+1. Verificar que este conectada la placa
+
+$ lsusb
+.
+.
+.
+Bus 002 Device 009: ID 2341:0043
+
+2. Determinar que puerto serial utiliza, por defecto es ACM0
+   pero esto puede variar
+
+$ dmesg
+...
+[44531.665005] cdc_acm 2-1.2:1.0: ttyACM0: USB ACM device
+
+3.  Cambiar permisos al puerto para evitar inconvenientes
+
+$ sudo chmod a+rw /dev/ttyACM0
+
+4. Crear enlace simbólico
+
+$ sudo ln -sf /dev/ttyACM0 /dev/ttyS0
+
+5. Si lo pide asignar 0 en ACMx, y 0 en Sx
+
+*** Para filtar la salida de dmesg
+sudo dmesg | grep -i cdc
+goss@Mugol:~/Terminal$ sudo dmesg | grep -i tty
+
+************************************************************************************
+Para instalar libreria de acelerometro MMA7361 en Arduino
+
+1. Descargar archivo 
+http://playground.arduino.cc/Main/InterfacingWithHardware#motion_accelerometer
+
+2. copia el archivo comprimido al directorio libraries de Arduino.
+   lo importante son los archivos .cpp y .h
+
+3. Descomprimirlo y agregar la libreria (toda la carpeta) desde Arduino en
+   Sketch-> Importar Libreria -> add Library...
+
+4. incluirla en el programa
+	#include <AcceleroMMA7361.h>
+
+
+************************************************************************************
+Para instalar librerias qextserialport.h en QT - Manejo de Arduino desde QT
+
+	Opción 1
+
+1. Descargar librerias  
+https://code.google.com/p/qextserialport/
+
+O directamente desde la terminal
+git clone https://code.google.com/p/qextserialport/
+
+
+2. Se descomprime, se ingresa al directorio resultante, 
+   y se compila
+
+$ sudo qmake
+$ sudo make
+$ sudo make install
+
+	Opción 2
+1. Descargar librerias  
+https://code.google.com/p/qextserialport/
+
+2. Se descomprime el archivo  y se abre desde QtCreator 
+   el archivo qextserialport.pro
+
+3. Se construye el proyecto, con el icono del martillo.
+
+4. Se ingresa al directorio resultante de la compilación
+
+$ cd build-qextserialport-Desktop-Debug
+
+4. Se instalan las librerias en el sistema
+
+$ sudo make install 
+
+************************************************************************************
+
+Instalar la ultima version de Octave en Debian 8
+
+1. Instalar el Snap flatpak 
+$ su -c "apt install flatpak"
+
+2. Instalar Plugiin de Flatpak
+$ su -c "apt install gnome-software-plugin-flatpak"
+
+3. Instalar repositorios de este Snap
+$ su -c "flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo"
+
+4. Una vez instalado ejecutar por terminal Octave en su version 4.4.1
+$ flatpak run org.octave.Octave 
+
+5. Para ejecutarlo con interfaz grafica solamente aumentar --gui al final
+$flatpak run org.octave.Octave --gui
+
+Para argar librerias desde la terminal de octave
+1. Descargo la libreria desde el site oficial 
+   https://octave.sourceforge.io/packages.php
+
+2. Una vez descargado el archivo, por lo general .tar.gz   lo instalo desde
+   la terminal de Octave 
+>>  pkg install image-2.8.0.tar.gz
+
+Configurar OCTAVE 4.0
+
+Para corregir que la ventana de comandos no me muestre el ultimo 
+resultado, sino el mensaje
+
+
+
+ --less-- (f)orward (b)ack (q)uit
+
+1.Solamente escribo en la Terminal de Octave el comando
+ more off
+ 
+************************************************************************************
+Instalar PHP y MySQl en linux
+
+1. Instalacion de MySQL
+
+$ sudo apt-get install mysql-server
+
+2. Para instalar el sevidor Apache
+
+$ sudo apt-get install apache2
+
+3. Se verifica en el navegador
+
+http://localhost
+
+O bien:
+
+http://192.168.0.55 (sustituye esa IP por la IP de tu máquina)
+
+4. Para instalr PHP
+
+$ sudo apt-get install php5 libapache2-mod-php5
+
+5. Se reinicia el servidor Apache
+
+$ sudo /etc/init.d/apache2 restart
+
+El directorio predeterminado donde se guardan los documentos del servidor web 
+en Apache es /var/www y el fichero de configuración del servidor está en 
+/etc/apache2/apache2.conf. Otras configuraciones están almacenadas en otros 
+subdirectorios de /etc/apache2 como /etc/apache2/mods-enabled para los módulos
+habilitados, /etc/apache2/sites-enabled para los "virtual hosts" y 
+/etc/apache2/conf.d para las configuraciones globales que afectarán a todos 
+los virtual host.
+
+6. Se verifica creando un archivo .php en la ruta por defecto del 
+servidor Apache, el archivo puede llamarse por ejemplo, info.php
+y debe contener lo siguiente
+
+<?php 
+phpinfo(); 
+?>
+
+7. Una vez creado el archivo se prueba en el navegador
+http://localhost/info.php
+
+8. Instalar  modulo PHP5-MySql y otras extensiones necesarias
+Con el comando 
+$ sudo apt-cache search php5
+
+9. Se encuentra el listado de extensiones PHP disponibles en 
+los repositorios
+
+10. Instalar extensiones php 
+$ sudo apt-get install php5-mysql php5-curl php5-gd 
+php-pear php5-imagick php5-sqlite php5-tidy 
+php5-xmlrpc php5-xsl
+
+11. Reinicia  el servidor php para que los cambios tengan efecto
+$ sudo /etc/init.d/apache2 restart
+
+12. Instalar PhpMyAdmin para gestionar bases de datos MySQL
+
+$ sudo apt-get install phpmyadmin
+
+Se definen las siguientes opciones :
+
+Se escoge 
+
+ [*] apache2
+
+y luego
+
+ <si>
+ se crea contraseña de root para SQL y de admin de phpMyAdmin
+ las mias son 
+usuarioRootMsql:
+  jgAsql
+
+
+//por ahora deje solo la anterior 01/09/2015
+MySQL para phpmyadmin:
+  jgAadmin
+
+13. Una vez instalado se accede al gestor por medio de una URL
+como esta :
+
+http://localhost/phpmyadmin/
+
+Usuario : root
+Password : jgAsql
+
+************************************************************************************
+
+Configurar PHP en eclipse
+
+1. En eclise ir a Ayuda-->install New Software
+
+2. En la ventana que se abre escoger la siguiente URL
+Luna - http://download.eclipse.org/releases/luna
+
+3. Buscar el modulo de desarrollo web(por lo general es el ultimo) 
+Web,XML,Java EE and OSGi Enterprise Development 
+
+4.Buscar el modulo de PHP y descargarlo
+PHP Development Tools (PDT)
+
+5. Reiniciar eclipse
+6. Crear un nuevo proyecto PHP
+7. Una vez creado el proyecto, en el, crear un nuevo archivo PHP
+8. Crear un enlace simbolico de este proyecto a la carpeta /var/www
+   para que eclipse pueda ejecutar desde el servidor apache
+
+$ sudo ln -s /home/claudia/workspace/pruebaPHP02/ /var/www/
+
+NOTA: el directorio predeterminado donde se guardan los documentos del 
+servidor web en Apache es /var/www y el   fichero de configuración del 
+servidor está en /etc/apache2/apache2.conf. 
+Otras configuraciones   están  almacenadas en  otros subdirectorios  de 
+/etc/apache2 como /etc/apache2/mods-enabled para los módulos habilitados,
+/etc/apache2/sites-enabled para los "virtual hosts" y /etc/apache2/conf.d 
+para las configuraciones globales  que afectarán a todos los virtual host.
+
+************************************************************************************
+Para utilizar SQL en Qt 
+
+1. Instalar dependencias 
+
+$ sudo apt-get install libqt4-sql-odbc
+$ sudo apt-get install libqt4-sql*
+
+************************************************************************************
+Instalar Open Cv 
+$ sudo apt-get install libopencv-dev python-opencv
+
+************************************************************************************
+Hackear red Wifi
+
+1. Instalar Reaver en su versión actual  (1.4)
+   Instalar Aircrack en cualquier versión (1.1)
+
+2. Posicionarse en la carpeta de reaver y teclear
+   reaver-1.4$ sudo -s
+   para pasar a modo root
+
+   reaver-1.4#
+
+3. colocar la tarjeta wifi en modo monitor 
+
+   # airmon-ng start wlan0
+
+4. Empezar a escanear redes (3 min aprox)
+
+  # airodump-ng mon0
+
+5. Escoger el BSSID (Mac Address) de la red que contenga más Beacons (paquetes)
+   con esto nos aseguramos que este activa
+  
+  # reaver -i mon0 -b MAC ADDRESS
+
+  Por ejemplo :
+
+  # reaver -i mon0 -b A4:99:47:AE:90:94
+
+NOTA : Si deseas buscar una pequeña vulnerabilidad en la red antes de 
+       solo teclea
+
+      # walsh -i mon0
+
+************************************************************************************
+
+REPARAR GRUB LINUX luego de instalar Windows
+
+1. Crear una live-usb con una distribución de Linux
+
+$ universal usb funciona bien
+
+2. Arrancar el sistema con la opción probar sistema sin instalar
+
+3. Abrir una terminal y mirar que particion es la que tengo que montar
+
+$ sudo fdisk -l
+
+4. montar en /mnt la particion que tiene Linux
+
+$ sudo mount /dev/sda3 /mnt  (asumiento que sda3 sea la particion con Linux)
+
+5. Montar el resto de directorios
+
+$ sudo mount --bind /dev /mnt/dev
+$ sudo mount --bind /dev/pts /mnt/dev/pts
+$ sudo mount --bind /proc /mnt/proc
+$ sudo mount --bind /sys /mnt/sys
+
+6. Acceder como root al sistema de archivos de Linux
+
+$ sudo chroot /mnt
+
+7. Cargar el grub en el MBR (Master Boot Record) sin #, solo sda
+
+$ grub-install --recheck /dev/sda
+
+8. Reiniciar
+
+
+************************************************************************************
+
+INSTALAR DRIVER WIFI PC DELL
+
+$ cd /etc/apt
+$ sudo cp sources.list sources.list.old
+$ sudo nano -c sources.list
+
+Editar archivo sustituyendo donde este "main" por "main contrib non-free"
+
+$ sudo apt-get update
+
+$ lspci
+
+12:00.0 Network controller: Broadcom limited bcm4313 802.11bgn Wireless Network Adapter (rev 01)
+
+$ aptitude search firmware-brcm*
+
+$ sudo apt-get install firmware-brcm80211

@@ -1,0 +1,712 @@
+### EMBEDDED BOARDS ###
+
+### STM32F207ZG (NUCLEO-F207ZG)
+
+MAC: 
+
+
+COMANDOS LINUX
+
+####### Primer acesso Orange Pi PC
+
+• ssh root@ip_address
+  senha: 1234
+
+####### Primer acesso RaspberryPi 4
+MAC: DC:A6:32:34:5C:35
+
+$ ssh pi@ip_address
+  senha: raspberry
+
+•  Install LCD MHS-3.5 inch Display
+
+$ sudo rm -rf LCD-show
+$ git clone https://github.com/Lcdwiki/LCD-show.git
+$ chmod -R 755 LCD-show
+$ cd LCD-show
+$ sudo ./MHS35-show
+
+####### Backup
+
+• Clonar memoria emmc da tinkerboard na sdcard
+
+$ ls /dev 	(na tkb)
+
+$ dd if=/dev/mmcblk2 of=/dev/mmcblk0 bs=1024 status=progress 
+
+
+• Clonar memoria emmc da tinkerboard na sdcard via ssh
+
+$ dd if=/dev/mmcblk2 | gzip -1 - | pv | ssh juanjose@192.168.0.201 dd of=/Volumes/Arquivos/Programs/Tinkerboard/img-tkb.gz
+
+• Clonar memoria emmc orangepipcplus via ssh - 
+
+1. gerar arquivo de imagem .img
+
+dd if=/dev/mmcblk1 | pv | ssh juanjose@192.168.0.202 dd of=/Volumes/Arquivos/Programs/OrangePi/OrangePiPcPlus_IF/orangepipcplus-if.img
+
+2. Gravar sistema na sd com o balena
+
+3. Jogar sd na placa e inicializar (vai aparecer erro initramfs)
+
+• Recuperar sistema (defino a inicialização pelo sd)
+
+(initramfs) fsck -y /dev/mmcblk0p1
+
+4. Gravar da sd para emmc
+
+$ sudo nand-sata-install 
+
+####### BROWSER-SYNC 
+
+• Instalar browser-sync
+
+$ npm install -g browser-sync
+
+
+• Ejecutar browser-sync
+
+browser-sync start --server --directory --files "*"
+
+####### DEVICE TREE (arquivos fonte .dts e arquivos compilados .dtb)
+
+- São arquivos que falam para o kernel qual driver e qual configuração usar para 
+  cada periférico (pinos, portas, etc)
+
+- O nome dos arquivos .dts deve ter no seu inicio o nome do fabricante e do chip 
+
+  sun8i-h3-plcgpio.dts
+
+• Ubicación (procurar o código fonte do kernel - kernel mainstream)  
+  https://elixir.bootlin.com/linux/v5.8.10/source/arch/arm/boot/dts
+
+- na placa os arquivos compilados (.dtb) encontram-se em /boot/dtb
+
+$ ls /boot/dtb
+
+• Compilación
+
+# armbian-add-overlay sun8i-h3-plcgpio.dts
+
+
+• Configuración
+
+- no arquivo /boot/armbianEnv.txt estão os parámetros que podem ser  
+  passados no kernel. 
+- Este arquivo é lido pelo bootloader
+
+
+####### FUSO HORÁRIO
+
+• Consultar hora e fuso horário
+
+$ date
+
+• Consultar hora e fuso horário do servidor
+
+$ curl http://ip_servidor:810/servidorCatracaIF/horarioIso8601
+
+
+• Configurar o fuso horário manual (seguir los pasos e dar OK)
+
+$ sudo dpkg-reconfigure tzdata
+
+
+• Configurar o fuso horário no arranque do sistema
+
+$ timedatectl list-timezones	=> Listar timezones
+
+$ sudo timedatectl set-timezone <time zone da lista>
+
+
+####### GROUPS
+
+• Criar um grupo
+
+$ sudo groupadd <nome_grupo>
+
+Ex: $ sudo groupadd gpio
+
+
+
+####### KERNEL
+
+• Mostrar versão do kernel
+
+$ uname -r
+
+
+####### MEMORIA
+
+• Mostrar partições em formato de árvore
+
+$ lsblk
+
+• Imprimir atributos de particiones (cid)
+
+$ blkid
+
+• Borrar emmc
+
+$ sudo wipefs -a /dev/mmcblk1
+
+####### MENUS
+
+• Esconder menu da Barra de Tarefas
+
+1) Editar o arquivo xfce4-session.xml
+
+$ sudo nano /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml
+
+2) comentar:  propriedade ->  Client2_Command
+
+<!--
+      <property name="Client2_Command" type="array">
+        <value type="string" value="xfce4-panel"/>
+      </property>
+-->
+
+
+####### MONTAR PENDRIVE E PARTIÇÕES
+
+• Visualizar partições
+
+$ df -h
+
+• Listar dispositivos montados
+
+$ lsblk
+
+• Montar pendrive ext4
+
+$ sudo mkdir /media/sd-ext4
+
+$ sudo mount /dev/sdbx /media/sd-ext4
+
+
+• Desmontar pendrive ext4
+
+$ sudo amount /media/sd-ext4
+
+
+####### NODE
+
+• Instalar node v.10
+
+1. Instalar curl (Client URL)
+
+$ sudo apt-get install curl
+
+
+2. Procurar pacote de node (-sL mostra erro caso tiver e procura o novo site caso tenha mudado)
+
+$ curl -sL https://deb.nodesource.com/setup_10.x | bash - 
+
+ou caso de erro (Não foi possível abrir arquivo de trava /var/lib/apt/lists/lock)
+
+$ sudo curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash
+
+3. Instalar node
+
+$ sudo apt-get install -y nodejs
+
+
+####### PINOS EMBEDDED BOARDS
+
+• Habilitar um pino GPIO
+
+1. Activar o pino exportando ele
+
+$ sudo su
+# echo "71" > /sys/class/gpio/export
+
+2. Definir dirección do pino (in -> entrada | out -> saida)
+
+# echo "in" > /sys/class/gpio/gpio71/direction
+
+
+3. Si lo definí como salida puedo definir su estado
+
+# echo "1" > /sys/class/gpio/gpio71/value		
+
+Ou
+
+# echo "0" > /sys/class/gpio/gpio71/value
+
+
+• Deshabilitar um pino GPIO
+
+# echo "66" > /sys/class/gpio/unexport
+
+
+####### PROCESADOR
+
+• Definir frecuencia de CPU
+
+$ sudo cpufreq-set -u 1.20GHz
+
+
+
+####### POWER-BUTTON ORANGEPIPC+
+
+• Deshabilitar power button
+
+1) Habilitar serviço acpid
+
+$ sudo systemctl enable acpid.service && sudo systemctl start acpid.service
+
+2) Editar arquivo de configuração
+
+$ sudo nano /etc/systemd/logind.conf
+
+3) descomentar a linha 
+
+#HandlePowerKey=poweroff 
+
+4) alterar o valor para ignore
+
+#HandlePowerKey=ignore
+
+5) Reiniciar serviço acpid
+
+$ sudo systemctl restart acpid.service
+
+
+####### PYTHON
+
+• Instalar python3 debian
+
+$ sudo apt-get install -y python3-pip
+
+• Conferir version de pip3
+
+$ pip3 --version
+
+• Instalar pacotes ou bibliotecas de python (Ex: Django, NumPy)
+
+$ pip3 install nome_pacote
+
+
+####### REDE
+
+• Instalar ferramenta conman 
+
+$ sudo apt-get install connman
+
+• Listar NIC disponibles
+
+$ sudo connmanctl services
+
+reposta:
+*AO Wired ethernet_0281df760031_cable
+
+• Listar configurações da NIC
+
+$ sudo connmanctl services ethernet_0281df760031_cable
+
+
+• Copiar arquivo pelo remote ssh
+
+1) caso seja una pasta seguida por git apagar a pasta .git
+
+$ sudo rm -r .git
+
+2) copiar pelo ssh remote
+
+scp -P 39982 -r ./desktopif-interface-smartfit if@remote.integrafacil.net.br:/home/if/desktopif/environment/Desktop
+
+
+
+• Configurar DHCP
+
+1) Listar redes disponibles
+$ sudo connmanctl services 
+
+reposta:
+*AO Wired ethernet_00142da01b7d_cable
+
+2) Pegar o conteudo "ethernet_00142da01b7d_cable"
+
+3) configurar como dhcp: 
+$ connmanctl config ethernet_00142da01b7d_cable --ipv4 dhcp
+
+4) Configurar como ip estatico: 
+$ connmanctl config ethernet_00142da01b7d_cable --ipv4 manual [IP ESTATICO] [MASCARA] [IP_GATEWAY]
+
+
+• Configurar hostname
+
+a) Editar el archivo /etc/hostname, con el hostname a utilizar, luego actualizar y reiniciar
+
+$ sudo nano -c /etc/hostname
+
+
+b) Ejecutar o serviço hostnamectl
+
+$ sudo hostnamectl set-hostname nome-a-usar  
+
+
+• Deshabilitar IPv6 na OrangePi
+
+$ sysctl -w net.ipv6.conf.all.disable_ipv6=1
+
+
+• Instalar NGINX
+
+$ sudo apt-get install nginx
+
+
+• Configurar WIFI (testado orangepipcplus)
+
+a) Verificar NIC WIFI
+
+$ nmcli radio
+
+WIFI-HW  WIFI     WWAN-HW  WWAN
+enabled  enabled  enabled  enabled
+
+$ nmcli device
+
+DEVICE  TYPE      STATE         CONNECTION
+eth0    ethernet  connected     eth0
+wlan0   wifi      disconnected  --
+lo      loopback  unmanaged     --
+
+b) Escanear y listar las redes wifi disponibles
+
+$ nmcli device wifi rescan
+
+$ nmcli device wifi list
+
+
+IN-USE  SSID                            MODE   CHAN  RATE        SIGNAL  BARS  SECURITY
+        Interlaken0Sx                   Infra  1     195 Mbit/s  100     ▂▄▆█  WPA1 WPA2
+
+c) Conectar a una rede wifi
+
+$ nmcli device wifi connect SSID-Name password wifi-password
+
+Ex: 
+
+$ nmcli device wifi connect Interlaken0Sx password 01020304
+
+• Deshabilitar WIFI
+
+$ sudo nmcli radio wifi off 
+
+
+####### SD e EMMC
+
+> Orange PiPc+
+
+• Gravar imagem da sd à emmc
+
+$ sudo nand-sata-install	
+
+Choose an option:
+	2 Boot from eMMC - System on eMMC
+eMMC install
+	WARNING <Yes>
+Select filesystem type for eMMC /dev/mmcblk1
+	1 ext4
+eMMC istall
+	. . .
+eMMC istall
+	<Power off>
+
+
+####### SCRIPTS
+
+• Criar script 
+
+1. O nome do arquivo tem que ter a extensão .sh
+2. Na primeira linha do arquivo tem que ter o rota do Shell 
+
+#!/bin/bash
+
+
+####### SERVIÇOS
+
+• Instalar servicios
+
+1. Copiar o executante à pasta /etc/systemd/system
+$ sudo cp integrafacil2.service /etc/systemd/system
+
+2. Hbilitar o serviço
+$ sudo systemctl enable integrafacil2.service
+
+3. Startar o serviço
+$ sudo systemctl start integrafacil2.service
+
+• Verificar todos los servicios 
+
+$ sudo systemctl status
+
+• Verificar un serviço 
+
+$ sudo systemctl status nome-serviço
+
+Ex:
+
+$ sudo systemctl status configdesktopif.service
+$ sudo systemctl status desktopif.service
+$ sudo systemctl status desktopif.service
+$ sudo systemctl status integrafacil2.service
+
+• arrancar servicio
+
+$ sudo systemctl start nome-seviço
+
+Ex:
+ 
+$ sudo systemctl start desktopif.service
+
+• Detener servicio nome-seviço
+ 
+$ sudo systemctl stop
+
+Ex:
+ 
+$ sudo systemctl stop desktopif.service
+
+• matar servicios de node
+
+$ sudo killall node
+
+• arrancar npm 
+
+$ sudo npm start
+
+• Verificar un serviço como o journal
+
+$ journalctl -b -f -u nome do servico
+
+
+####### USUARIOS
+
+• agregar usuario a grupo sudoers
+
+a) logarse como root e editar arquivo /etc/sudoers (recomedável fazer copia do arquivo)
+$ su
+# cp sudoers sudoers.orig
+# nano -c /etc/sudoers
+
+b) Agregar usuario después de usuario root
+root ALL=(ALL:ALL) ALL
+user ALL=(ALL:ALL) ALL
+
+• ver usuarios com acessos root
+
+$ cat /etc/sudoers
+
+• ver todos os usuarios 
+
+$ cat /etc/shadow
+
+• crear usuario
+
+$ sudo useradd -m usuario 
+
+ou
+
+$ sudo adduser -m usuario 
+
+(O “m” serve para criar o diretório de usuário)
+
+• Criar senha
+
+$ sudo passwd usuario
+
+• Adicionar usuario al grupo sudo
+	
+$ sudo usermod -aG sudo usuario 
+
+• Adicionar usuario al grupo da maquina virtual Virtual Box (vboxsf) 
+
+$ sudo adduser nome_usuario vboxsf
+
+• Agregar usuario a grupo da maquina virtual
+  (esto soluciona o problema de montagem das pastas de windows no linux)
+
+$ sudo adduser usuario vboxsf
+
+####### VIRTUAL BOX
+
+• Instalar Guest Additions
+
+a) Montar imagen .iso das Guest Additions
+
+Dispositivos > Discos Opticos > Escolher/Criar uma imagem de disco...
+
+C:\Program Files\Oracle\VirtualBox\VBoxGuestAdditions.iso
+
+b) Montar imagem desde o getor de arquivos da VM 
+
+c) acessar e executar arquivo 
+
+cd /media/cdrom0
+
+sudo sh VBoxLinuxAdditions.run
+
+d) reiniciar
+
+• Redimensionar almacenamiento (hd) maquina virtual
+
+a) abrir cmd como admin na pasta de instalacao do programa virtual box e 
+   redimensionar o tamanho do OS virtualizado (arquivo.vdi)
+
+vboxmanage modifyhd "D:\VirtualBox VMs\DebiaN10\DebiaN10.vdi" --resize 262144
+
+####### VISUAL STUDIO CODE
+
+• Extensiones
+
+- Arduino for Visual Studio Code
+- C/C++ IntelliSense, debugging, and code browsing
+- C/C++ Intellisense with the help of GNU Global tags
+- Code Runner [.run] (Run C, C++, Java, ...)
+- Debugger for Java
+- Dracula Official
+- ES7 React/Redux/GraphQL/React-Native snippets
+- Git History
+- Java Extension Pack
+- Java Test Runner
+- jshint
+- Jupyter
+- Languageg Support for Java (TM) by Red Hat
+- Live Server
+- Material Icon Theme
+- Maven for Java
+- npm intellisense
+- Numbered Bookmarks
+- Path Intellisense [./]
+- Prettier - Code formatter
+- Project Manager for Java
+- Pylance
+- Python
+- Remote - SSH
+- Remote - SSH: Editing Configuration Files
+- Simple React Snippets
+- Visual Studio IntelliCode
+	
+
+• Seleccionar lenguage
+
+ (⌘K M)
+
+
+
+
+	
+####### COMANDOS URL ###
+
+• start remote
+
+http://plc.interlaken.ind.br:888/metodos/startremote?numeroSerie=*ns*&senha=77777
+
+• stop remote
+
+http://plc.interlaken.ind.br:888/metodos/stopremote?numeroSerie=*ns*&senha=77777
+	
+• desktopif 
+	
+http://endereco_ip/config
+http://endereco_ip/config/adv
+http://endereco_ip/logs
+
+### PINOS ORANGEPI PC ###
+
+{
+  "3": "12",
+  "5": "11",
+  "7": "6",
+  "8": "13",
+  "10": "14",
+  "11": "1",
+  "12": "110",
+  "13": "0",
+  "15": "3",
+  "16": "68",
+  "18": "71",
+  "19": "64",
+  "21": "65",
+  "22": "2",
+  "23": "66",
+  "24": "67",
+  "26": "21",
+  "29": "7",
+  "31": "8",
+  "32": "200",
+  "33": "9",
+  "35": "10",
+  "36": "201",
+  "37": "20",
+  "38": "198",
+  "40": "199"
+}
+
+### PINOS TINKERBOARD ###
+{
+  "3": "252",
+  "5": "253",
+  "7": "17",
+  "8": "161",
+  "10": "160",
+  "11": "164",
+  "12": "184",
+  "13": "166",
+  "15": "167",
+  "16": "162",
+  "18": "163",
+  "19": "257",
+  "21": "256",
+  "22": "171",
+  "23": "254",
+  "24": "255",
+  "26": "251",
+  "29": "165",
+  "31": "168",
+  "32": "239",
+  "33": "238",
+  "35": "185",
+  "36": "223",
+  "37": "224",
+  "38": "187",
+  "40": "188"
+}
+
+### PINOS RASPBERRY PI 3B ###
+
+{
+  "3": "2",
+  "5": "3",
+  "7": "4",
+  "8": "14",
+  "10": "15",
+  "11": "17",
+  "12": "18",
+  "13": "27",
+  "15": "22",
+  "16": "23",
+  "18": "24",
+  "19": "10",
+  "21": "9",
+  "22": "25",
+  "23": "11",
+  "24": "8",
+  "26": "7",
+  "29": "5",
+  "31": "6",
+  "32": "12",
+  "33": "13",
+  "35": "19",
+  "36": "16",
+  "37": "26",
+  "38": "20",
+  "40": "21"
+}
+
+
+
+O código para cadastrar a digital é 1+ID do Aluno, que é o 49520 (ou seja 149520)
+	
