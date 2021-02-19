@@ -1,0 +1,54 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+        compatible = "allwinner,sun8i-h3";
+
+        fragment@0 {
+            target = <&pio>;
+            __overlay__{
+
+lineIn1_pin: lineIn1_pin{
+                        label = "lineIn1";
+                        pins = "PA1";
+                        function = "gpio_in";
+                        bias-pull-down;
+                        };
+                    
+lineIn2_pin: lineIn2_pin{
+                        label = "lineIn2";
+                        pins = "PA0";
+                        function = "gpio_down";
+                        bias-pull-up;
+                        };
+
+lineIn3_pin: lineIn3_pin{
+                        label = "lineIn3";
+                        pins = "PA3";
+                        function = "gpio_down";
+                        bias-pull-up;
+                        };
+
+lineIn4_pin: lineIn4_pin{
+                        label = "lineIn4";
+                        pins = "PC0";
+                        function = "gpio_down";
+                        bias-pull-up;
+                        };
+            };
+        };
+
+        fragment@1 {
+            target-path = "/";
+            __overlay__ {
+
+                plc {
+                    pinctrl-names = "linIn1", "lineIn2", "lineIn3", "lineIn4";
+                    pinctrl-0 = <&lineIn1_pin>;
+                    pinctrl-1 = <&lineIn2_pin>;
+                    pinctrl-3 = <&lineIn3_pin>;
+                    pinctrl-4 = <&lineIn4_pin>;
+                };
+            };
+        };
+};
