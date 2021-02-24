@@ -49,13 +49,21 @@ dd if=/dev/mmcblk1 | pv | ssh juanjose@192.168.0.202 dd of=/Volumes/Arquivos/Pro
 
 3. Jogar sd na placa e inicializar (vai aparecer erro initramfs)
 
-• Recuperar sistema (defino a inicialização pelo sd)
+4. Recuperar sistema (defino a inicialização pelo sd)
 
 (initramfs) fsck -y /dev/mmcblk0p1
 
-4. Gravar da sd para emmc
+5. Gravar da sd para emmc
 
 $ sudo nand-sata-install 
+
+• Gravar imagem na emmc com o balena
+
+1) Colocar jumper no Parking (no function) mode
+
+2) conectar tkb pelo microusb ao computador 
+
+3) gravar com o balena a imagem selecionada
 
 ####### BROWSER-SYNC 
 
