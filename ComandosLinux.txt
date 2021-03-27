@@ -573,6 +573,8 @@ vboxmanage modifyhd "D:\VirtualBox VMs\DebiaN10\DebiaN10.vdi" --resize 262144
 • Extensiones
 
 - Arduino for Visual Studio Code
+-> Bracket Pair Colorizer: identifica pares (abre y cierra) de llaves, corchetes, 
+  parentesis con el mismo color.
 - C/C++ IntelliSense, debugging, and code browsing
 - C/C++ Intellisense with the help of GNU Global tags
 - Code Runner [.run] (Run C, C++, Java, ...)
@@ -586,7 +588,8 @@ vboxmanage modifyhd "D:\VirtualBox VMs\DebiaN10\DebiaN10.vdi" --resize 262144
 - Jupyter
 - Languageg Support for Java (TM) by Red Hat
 - Live Server
-- Material Icon Theme
+-> Material Icon Theme: Define iconos para cada tipo de arquivo, isso ajuda na 
+  organização do projeto.
 - Maven for Java
 - npm intellisense
 - Numbered Bookmarks
@@ -598,6 +601,7 @@ vboxmanage modifyhd "D:\VirtualBox VMs\DebiaN10\DebiaN10.vdi" --resize 262144
 - Remote - SSH
 - Remote - SSH: Editing Configuration Files
 - Simple React Snippets
+-> Tabnine Autocomplete AI: Autocompletar de código para as linguagens mais utilizadas.
 - Visual Studio IntelliCode
 	
 
